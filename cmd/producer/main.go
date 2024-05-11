@@ -7,19 +7,13 @@ import (
 )
 
 func main() {
-	deliveryChannel := make(chan kafka.Event)
+	deliveryChan := make(chan kafka.Event)
 	producer := NewKafkaProducer()
-	Publish("Mensagem", "teste", producer, nil, deliveryChannel) // Forma sincrona, pois espera o retorno da mensagem para continuar
+	Publish("Mensagem", "teste", producer, nil, deliveryChan) // Publica a mensagem no tópico
 
-	e := <-deliveryChannel    // deliveryChannel é quem recebe a mensagem e quando ele receber vai cair no e (evento)
-	msg := e.(*kafka.Message) // o msg vai receber a mensagem do e (evento)
+	go DeliveryReport(deliveryChan) // Utilizando o 'go', jogamos essa função para outra thread -> Assíncrono
 
-	if msg.TopicPartition.Error != nil {
-		fmt.Println("Erro ao enviar")
-	} else {
-		fmt.Println("Mensagem enviada:", msg.TopicPartition) // Imprime qual partição a mensagem foi enviada com sucesso
-	}
-
+	fmt.Println("Guilherme Meireles")
 	producer.Flush(1000)
 }
 
@@ -45,4 +39,18 @@ func Publish(msg string, topic string, producer *kafka.Producer, key []byte, del
 		return err
 	}
 	return nil
+}
+
+func DeliveryReport(deliveryChan chan kafka.Event) { // Função para receber a resposta do evento enviado ao Kafka
+	for e := range deliveryChan { // Para cada evento que ele receber, vai cair no loop e printar a mensagem
+		switch ev := e.(type) {
+		case *kafka.Message:
+			if ev.TopicPartition.Error != nil {
+				fmt.Println("Erro ao enviar")
+			} else {
+				fmt.Println("Mensagem enviada:", ev.TopicPartition)
+				// Anotar no db que a mensagem foi processada
+			}
+		}
+	}
 }
