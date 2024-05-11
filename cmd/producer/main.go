@@ -19,7 +19,10 @@ func main() {
 
 func NewKafkaProducer() *kafka.Producer {
 	configMap := &kafka.ConfigMap{
-		"bootstrap.servers": "fc2-kafka-advanced-kafka-1:9092",
+		"bootstrap.servers":   "fc2-kafka-advanced-kafka-1:9092",
+		"delivery.timeout.ms": "0",    // Tempo máx de entrega de uma mensagem ( 0 é infinito )
+		"acks":                "all",  // 0 = Não tenho o retorno se a mensagem foi entregue (mais performatica) / 1 = Leader retorna que ele persistiu a mensagem / all = Retorna depois do Leader e os sync-brokers terem persistido a mensagem (menos performatica)
+		"enable.idempotence":  "true", // Padrão é false = mensagem pode chegar repetida, pode perder alguma mensagem / true = Mensagem foi entregue na ordem e apenas 1 vez, caso utilize true, o "acks" deve ser all
 	}
 	p, err := kafka.NewProducer(configMap)
 	if err != nil {
