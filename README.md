@@ -27,19 +27,49 @@ dentro do bash do `gokafka`
 
 > Caso apareça a mensagem "Hello Go" significa que está funcionando
 
----
-
-### Testar o envio de mensagens para o kafka:
-
-- Abra um outro terminal
+### Em seguida:
+- Abra um terminal
 - Abra o bash do kafka: `docker exec -it fc2-kafka-advanced-kafka-1 bash`
 - Vamos criar um tópico: `kafka-topics --create --bootstrap-server=localhost:9092 --topic=teste --partitions=3`
-- Logo após, abra o console do consumer no mesmo bash:
-`kafka-console-consumer --bootstrap-server=localhost:9092 --topic=teste`
 
-> Com o console do consumer aberto, abra um novo terminal e vamos rodar nossa aplicação com o comando `go run cmd/producer/main.go` dentro
-do bash `docker exec -it gokafka bash`
+---
 
-**Com isso, você verá que no console do consumer chegará uma "Mensagem"**
+### Testar o envio e recebimento de mensagens para o kafka (via Terminal):
+
+- Abra 2 terminais, com os nomes `producer` e `consumer`
+
+<br>
+
+- No terminal `consumer` rodaremos os comandos na ordem:
+> - `docker exec -it fc2-kafka-advanced-kafka-1 bash`
+> - `kafka-console-consumer --bootstrap-server=localhost:9092 --topic=teste`
+
+<br>
+
+- No terminal `producer` rodaremos os comandos na ordem:
+> - `docker exec -it gokafka bash`
+> - `go run cmd/producer/main.go`
+
+Para cada `go run cmd/producer/main.go`, você verá o callback no terminal do `consumer`
+
+---
+
+### Testar o envio e recebimento de mensagens para o kafka (via Aplicação GO):
+
+- Abra 2 terminais, com os nomes `goapp-producer` e `goapp-consumer`
+
+<br>
+
+- No terminal `goapp-consumer` rodaremos os comandos na ordem:
+> - `docker exec -it gokafka bash`
+> - `go run cmd/consumer/main.go`
+
+<br>
+
+- No terminal `goapp-producer` rodaremos os comandos na ordem:
+> - `docker exec -it gokafka bash`
+> - `go run cmd/producer/main.go`
+
+Para cada `go run cmd/producer/main.go`, você verá o callback no terminal do `goapp-consumer`
 
 ---

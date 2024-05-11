@@ -9,7 +9,7 @@ import (
 func main() {
 	deliveryChan := make(chan kafka.Event)
 	producer := NewKafkaProducer()
-	Publish("Mensagem", "teste", producer, []byte("transferência"), deliveryChan) // Publica a mensagem no tópico / Ao colocar a key = []byte("transferência"), garantimos a ordem de recebimento das mensagens e que ela sempre irá apenas para uma partição
+	Publish("Transferiu", "teste", producer, []byte("transferência"), deliveryChan) // Publica a mensagem no tópico / Ao colocar a key = []byte("transferência"), garantimos a ordem de recebimento das mensagens e que ela sempre irá apenas para uma partição
 
 	go DeliveryReport(deliveryChan) // Utilizando o 'go', jogamos essa função para outra thread -> async
 
