@@ -9,8 +9,8 @@ func main() {
 
 	configMap := &kafka.ConfigMap{
 		"bootstrap.servers": "fc2-kafka-advanced-kafka-1:9092",
-		"client.id":         "goapp-consumer", // Nome de quem está consumindo a mensagem do tópico
-		"group.id":          "goapp-group",    // Inscreve o consumer em um grupo
+		"client.id":         "goapp-consumer", // Id do consumer que esta lendo a mensagem do tópico / Caso troque o nome do consumer e mantenha o mesmo grupo, haverá um rebalance e os consumers do grupo irão ler partições diferentes
+		"group.id":          "goapp-group",    // Inscreve o consumer em um grupo / Caso mude o nome do grupo, o consumer desse novo grupo, se for apenas 1, vai ler todas as partições
 		"auto.offset.reset": "earliest",       // Lê as mensagens desde o início
 	}
 	c, err := kafka.NewConsumer(configMap)
